@@ -503,12 +503,6 @@
             }
         };
 
-
-        // ============================================================================
-        // SISTEMA AUTOMÁTICO DE RUTAS INVERSAS
-        // ============================================================================
-        
-        // Mapeo de nombres de ubicaciones para títulos
         const UBICACIONES_NOMBRES = {
             'aeropuerto_gdl': '✈️ Aeropuerto GDL',
             'base_aerea': '🛡️ Base Aérea Militar',
@@ -600,6 +594,7 @@
             const destino = UBICACIONES_NOMBRES[destinoId] || destinoId;
             return `${origen} → ${destino}`;
         }
+
 
         // Datos de rutas
         const RUTAS = {
@@ -1495,9 +1490,8 @@ secundaria: {
             }
         };
 
-        // ✅ ACTIVAR SISTEMA DE RUTAS INVERSAS (después de que RUTAS esté completamente definido)
+        // ✅ ACTIVAR SISTEMA DE RUTAS INVERSAS
         generarTodasLasRutasInversas(RUTAS);
-
         let map;
         let origenMarker, destinoMarker;
 
@@ -1553,9 +1547,10 @@ secundaria: {
         }
 
         function mostrarRutas(origen, destino, rutas) {
-            // ✅ Usar el nuevo sistema de títulos con inversas
-            const titulo = generarTituloRuta(origen, destino);
-            document.getElementById('routesTitle').textContent = titulo;
+            const origenNombre = UBICACIONES[origen].nombre;
+            const destinoNombre = UBICACIONES[destino].nombre;
+
+            document.getElementById('routesTitle').textContent = `${origenNombre} → ${destinoNombre}`;
 
             let html = '';
             const tipos = ['principal', 'secundaria', 'terciaria'];
@@ -1563,11 +1558,6 @@ secundaria: {
 
             tipos.forEach(tipo => {
                 const ruta = rutas[tipo];
-                // ✅ Usar descripción invertida si existe
-                const descripcion = ruta.descripcionInversa || ruta.descripcion;
-                // ✅ Indicador de ruta inversa
-                const indicador = ruta.esInversa ? '<div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem; text-align: center;">🔄 Ruta inversa</div>' : '';
-                
                 html += `
                     <div class="route-card ${tipo}">
                         <div class="route-title">${emojis[tipo]} Ruta ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</div>
@@ -1581,11 +1571,10 @@ secundaria: {
                                 <span>${ruta.tiempo}</span>
                             </div>
                         </div>
-                        <div class="route-description">${descripcion}</div>
+                        <div class="route-description">${ruta.descripcion}</div>
                         <a href="${ruta.url}" target="_blank" rel="noopener noreferrer" class="route-link">
                             Abrir en Google Maps
                         </a>
-                        ${indicador}
                     </div>
                 `;
             });
